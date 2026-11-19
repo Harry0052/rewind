@@ -15,10 +15,10 @@ STATUS: PASS
 USER-FACING WORKING FLOWS: The flows from Stages 2–5, plus local activity counts on Settings, a runbook, and an unrun pilot plan.
 UI/UX: Screenshots refreshed for overview, add purchase, sample purchase, limits, and settings at 390px and 1440px. No compliance or production-ready claim in the UI.
 DATA + SECURITY: Owner checks on purchases, cases, and receipt files. Origin checks and SQLite rate limits on writes. Path keys for files must match a generated id. Audit rows omit letter text and receipt notes. Metrics count purchases, prepared cases, and confirmed recoveries for that browser only.
-TESTS: npm run lint pass; npm run typecheck pass; npm test pass; npm run build pass; npm run test:e2e pass (screenshot test skipped unless SCREENSHOTS=1). GitHub Actions is the same list and has not been observed on a remote run from this environment yet.
+TESTS: npm run lint pass; npm run typecheck pass; npm test pass (25); npm run build pass; npm run test:e2e pass (13, including screenshots). GitHub Actions run 44425761161 on main passed the same lint, typecheck, unit, build, and e2e list.
 REAL INTEGRATIONS: none | SANDBOX: sample policies and sample ledger, labeled Sample | DISABLED: email ingestion, bank linking, OCR, merchant send, payments, chargebacks, hosted Postgres
 FILES CHANGED: metrics, Settings counts, README, docs/RUNBOOK.md, docs/PILOT.md, docs/screenshots, STATUS.md
-OPEN BUGS/RISKS: Guest sessions die with the cookie. Rate limits are per process. Receipt files are not malware-scanned. Sample policy dates refresh on open. CI on GitHub has not been watched from here.
+OPEN BUGS/RISKS: Guest sessions die with the cookie. Rate limits are per process. Receipt files are not malware-scanned. Sample policy dates refresh on open. The GitHub Actions runner warned that actions/checkout and actions/setup-node still target Node.js 20.
 NEXT STAGE PROPOSAL: None in this brief. A later change would add real, sourced merchant policies only with a recorded URL and date.
 AWAITING APPROVAL: YES
 ```
