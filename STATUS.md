@@ -2,7 +2,113 @@
 
 Product name: **Rewind**. The build brief used the codename UNDO. The owner renamed it. Code, UI, and docs say Rewind.
 
-This file is the stage log. The newest stage is first.
+The owner pre-approved Stages 0 through 6 and said not to stop between them. Each stage report is below. The newest stage is first.
+
+Stack: Next.js, TypeScript strict, Tailwind, Drizzle, SQLite, Vitest, Playwright, GitHub Actions. SQLite matches Ripple, Bond, and Lumen so the app runs with no API key. PostgreSQL is not wired up.
+
+## Stage 6 — Hardening, pilot plan, and release notes
+
+```text
+PRODUCT: Rewind (brief codename UNDO)
+STAGE: 6
+STATUS: PASS
+USER-FACING WORKING FLOWS: The flows from Stages 2–5, plus local activity counts on Settings, a runbook, and an unrun pilot plan.
+UI/UX: Screenshots refreshed for overview, add purchase, sample purchase, limits, and settings at 390px and 1440px. No compliance or production-ready claim in the UI.
+DATA + SECURITY: Owner checks on purchases, cases, and receipt files. Origin checks and SQLite rate limits on writes. Path keys for files must match a generated id. Audit rows omit letter text and receipt notes. Metrics count purchases, prepared cases, and confirmed recoveries for that browser only.
+TESTS: npm run lint pass; npm run typecheck pass; npm test pass; npm run build pass; npm run test:e2e pass (screenshot test skipped unless SCREENSHOTS=1). GitHub Actions is the same list and has not been observed on a remote run from this environment yet.
+REAL INTEGRATIONS: none | SANDBOX: sample policies and sample ledger, labeled Sample | DISABLED: email ingestion, bank linking, OCR, merchant send, payments, chargebacks, hosted Postgres
+FILES CHANGED: metrics, Settings counts, README, docs/RUNBOOK.md, docs/PILOT.md, docs/screenshots, STATUS.md
+OPEN BUGS/RISKS: Guest sessions die with the cookie. Rate limits are per process. Receipt files are not malware-scanned. Sample policy dates refresh on open. CI on GitHub has not been watched from here.
+NEXT STAGE PROPOSAL: None in this brief. A later change would add real, sourced merchant policies only with a recorded URL and date.
+AWAITING APPROVAL: YES
+```
+
+The pilot in `docs/PILOT.md` has not been run. Rewind is not claimed to be production-ready or certified.
+
+## Stage 5 — Trust and data controls
+
+```text
+PRODUCT: Rewind (brief codename UNDO)
+STAGE: 5
+STATUS: PASS
+USER-FACING WORKING FLOWS: Attach a PDF or image to your own purchase. Download it. Another browser gets 404. A text file is rejected and the purchase stays. Download JSON. Type DELETE to remove this browser’s data. Confirmed savings stay separate from estimates.
+UI/UX: Purchase page explains that files are not scanned. Settings explains download and delete. Overview shows both figures.
+DATA + SECURITY: Files live under data/uploads outside public/. Download checks user id. Storage keys are generated ids. Export is the owner’s rows. Delete removes purchases, cases, files, and the session.
+TESTS: src/lib/receipts/files.test.ts and src/lib/account/account.test.ts pass. e2e/privacy.spec.ts pass.
+REAL INTEGRATIONS: local file storage | SANDBOX: none for files | DISABLED: malware scanning, OCR
+FILES CHANGED: receipt file columns, upload and download routes, account export and delete, privacy e2e
+OPEN BUGS/RISKS: No virus scanner. A cleared cookie cannot download an old file because the session is the owner key.
+NEXT STAGE PROPOSAL: Stage 6 audit notes, counts, runbook, pilot, screenshots.
+AWAITING APPROVAL: YES
+```
+
+## Stage 4 — Case preparation
+
+```text
+PRODUCT: Rewind (brief codename UNDO)
+STAGE: 4
+STATUS: PASS
+USER-FACING WORKING FLOWS: From an eligible window, prepare a letter, edit it, copy or download it, and record a send only after checking the box. Record a refund amount or a denial. The case stays “Not sent” until that record. A second prepare opens the same case.
+UI/UX: Case workspace with checklist, copy, download, and separate confirmations for send, refund, and denial. Cases in the primary nav.
+DATA + SECURITY: One case per opportunity. Another browser gets 404. Terminal outcomes are not rewritten. A won case closes that opportunity so its estimate leaves the open total. The confirmed amount is the amount typed, capped at the purchase total.
+TESTS: src/lib/cases/cases.test.ts pass. e2e/cases.spec.ts pass.
+REAL INTEGRATIONS: none | SANDBOX: none | DISABLED: emailing the store
+FILES CHANGED: cases table, letter builder, case pages and routes
+OPEN BUGS/RISKS: Copy uses the browser clipboard and says so when it fails. The letter remains selectable.
+NEXT STAGE PROPOSAL: Stage 5 private files, export, and delete.
+AWAITING APPROVAL: YES
+```
+
+## Stage 3 — Policy-backed opportunities
+
+```text
+PRODUCT: Rewind (brief codename UNDO)
+STAGE: 3
+STATUS: PASS
+USER-FACING WORKING FLOWS: A purchase whose store matches a stored policy shows an open, closed, or outside-conditions explanation, the last day, and the policy source. A store with no policy says Rewind will not guess. Price adjustments have no dollar estimate.
+UI/UX: Opportunity cards on the purchase and a detail page. Overview splits “Estimated, still open” from “Recorded as received.”
+DATA + SECURITY: Opportunities belong to the purchase owner. Sample opportunities are readable and labeled. A newer policy version supersedes the old window. Evaluations recompute from the clock in the policy timezone.
+TESTS: src/lib/eligibility.test.ts covers the New York midnight boundary, inclusive and exclusive windows, and a below-minimum purchase. src/lib/opportunities/opportunities.test.ts pass. e2e/opportunities.spec.ts pass.
+REAL INTEGRATIONS: none | SANDBOX: fictional sample policies | DISABLED: live policy crawling
+FILES CHANGED: opportunities table, eligibility rules, opportunity UI
+OPEN BUGS/RISKS: A real store name will not match the sample registry. That is intentional.
+NEXT STAGE PROPOSAL: Stage 4 letters and outcomes.
+AWAITING APPROVAL: YES
+```
+
+## Stage 2 — Purchase ledger
+
+```text
+PRODUCT: Rewind (brief codename UNDO)
+STAGE: 2
+STATUS: PASS
+USER-FACING WORKING FLOWS: Add a purchase with line items, see the cent total, refresh, edit the lines, and delete. A bad price does not create a row. Another browser cannot open the purchase. Sample purchases are visible and not editable.
+UI/UX: Purchases list, add form, detail, and edit. Mobile and desktop overflow checks in Playwright. A live total is labeled as a preview; the server sum is what is stored.
+DATA + SECURITY: purchases, items, and optional typed receipt notes. Owner filter on every read and write. Origin check and rate limit on writes.
+TESTS: src/lib/purchases/purchases.test.ts and src/lib/money.test.ts pass. e2e/purchases.spec.ts pass. 86.00 plus two 12.50 lines stores 11100 minor units.
+REAL INTEGRATIONS: none | SANDBOX: sample ledger | DISABLED: file upload at this stage (added in Stage 5)
+FILES CHANGED: purchase migration, services, forms, list and detail pages
+OPEN BUGS/RISKS: None open in the ledger tests.
+NEXT STAGE PROPOSAL: Stage 3 deadlines.
+AWAITING APPROVAL: YES
+```
+
+## Stage 1 — Foundation
+
+```text
+PRODUCT: Rewind (brief codename UNDO)
+STAGE: 1
+STATUS: PASS
+USER-FACING WORKING FLOWS: Overview reads sample policies from SQLite. Each policy page opens. Settings save a name and timezone for this browser. Limits lists integrations that are off. Unknown URLs are a real 404.
+UI/UX: Paper #F6F7F7, ink #16212A, lime #B6ED72. Source Sans 3 and Fraunces. Skip link, focus ring, mobile nav, desktop nav. Contrast tests for ink on paper and ink on lime. A root loading.tsx was removed so notFound can return HTTP 404 instead of a streamed 200.
+DATA + SECURITY: users, sessions, audit, rate buckets, policies. Cookie rewind_session stores a hash only.
+TESTS: lint, typecheck, unit smoke tests, production build, and e2e/foundation.spec.ts pass.
+REAL INTEGRATIONS: none | SANDBOX: sample policy copy | DISABLED: the Limits list
+FILES CHANGED: app scaffold, design system, policy registry, settings
+OPEN BUGS/RISKS: None left from the foundation checks.
+NEXT STAGE PROPOSAL: Stage 2 ledger.
+AWAITING APPROVAL: YES
+```
 
 ## Stage 0 — Inspect and design
 
@@ -10,126 +116,15 @@ This file is the stage log. The newest stage is first.
 PRODUCT: Rewind (brief codename UNDO)
 STAGE: 0
 STATUS: PASS
-USER-FACING WORKING FLOWS: None yet. The repository had a one-line README and no application.
-UI/UX: No screens. Mobile flow is specified below and is not built.
-DATA + SECURITY: No database, no session, no secrets in the repo.
-TESTS: not run — there is no app yet.
-REAL INTEGRATIONS: none configured | SANDBOX: none yet | DISABLED: email receipt ingestion, bank linking, OCR, merchant submission, payments, chargebacks
+USER-FACING WORKING FLOWS: None. The repository started as a one-line README.
+UI/UX: No screens. The mobile flow was specified before coding.
+DATA + SECURITY: No database and no secrets.
+TESTS: not run — there was no app.
+REAL INTEGRATIONS: none | SANDBOX: none | DISABLED: email, bank, OCR, merchant send, payments, chargebacks
 FILES CHANGED: STATUS.md
-OPEN BUGS/RISKS: See risks below. Nothing is implemented, so nothing is faked.
-NEXT STAGE PROPOSAL: Stage 1 foundation — strict Next.js app, SQLite migrations, design tokens, shell, and one screen that reads the sample policy registry from the database.
+OPEN BUGS/RISKS: Sample policies can be mistaken for real stores; deadlines can be off by a day; money can be rounded; receipt files are untrusted; guest sessions are browser-local.
+NEXT STAGE PROPOSAL: Stage 1 foundation.
 AWAITING APPROVAL: YES
 ```
 
-The owner’s build request pre-approved Stages 0 through 6 and said not to stop between them. Stage 1 starts after this commit. Later stage reports stay in this file.
-
-### Repository
-
-- Remote: `Harry0052/rewind`, private, branch `main`.
-- Starting tree: `README.md` with the title only, plus the initial commit. No app, no CI, no database.
-- Sibling apps inspected: Ripple, Bond, and Lumen. They are Next.js App Router, TypeScript strict, Tailwind 4, Drizzle, `better-sqlite3`, Vitest, Playwright, and a GitHub Actions workflow that runs lint, typecheck, unit tests, build, and e2e.
-
-### Stack decision
-
-The brief suggests PostgreSQL. Rewind uses SQLite, matching Ripple, Bond, and Lumen, so `npm install`, `npm run db:setup`, and `npm run dev` work with no API key and no hosted database. PostgreSQL is not wired up and is not claimed.
-
-Sessions match the siblings: a random token in an `httpOnly` cookie, stored only as a SHA-256 hash. The cookie name will be `rewind_session`.
-
-### Product scope for the first working slice
-
-The job: a person adds a purchase from a receipt they have, sees a deadline calculated from a policy Rewind actually has on file, prepares a letter, sends it themselves, and records what the store did.
-
-By the end of Stage 2 the first real action is: add a purchase, refresh, and see the same line items and the same cent-accurate total.
-
-By the end of Stage 4 the aha moment works: eligibility window, a case the user edits, and a won or denied result only after the user records it.
-
-### What is not available
-
-| Integration | Decision |
-| --- | --- |
-| Merchant policy crawler | Not built. Policies are rows Rewind stores, with a source and a recorded date. The seed set is labeled sample and points at in-app pages. No live merchant site is scraped. |
-| OCR / receipt parsing | Not built. A typed note is `user_entered`. A file upload, when it exists, is stored and labeled not scanned. |
-| Email receipt ingestion (OAuth) | Disabled. No mail provider. |
-| Bank linking | Disabled. Not required. |
-| Sending the request to a merchant | Disabled. The user copies or downloads the letter and records the send. |
-| Payments, subscriptions, success fees | Disabled. Nothing is billed. |
-| Chargebacks | Out of scope. No chargeback flow. |
-
-### Primary mobile flow
-
-1. Overview — next action is obvious: add a purchase, or open a sample that is labeled sample.
-2. Add purchase — merchant, date, currency, line items. Total is the sum of the lines in minor units.
-3. Purchase — seller, date, items, total, and later the policy deadlines.
-4. Opportunity — why it is eligible, expired, or outside the stored conditions, plus the deadline.
-5. Case — editable letter, checklist, copy or download. Status stays unsent until the user records a send.
-6. Outcome — the user enters a refunded amount or a denial. Only a confirmed amount counts as recovered.
-7. Settings — name, timezone, export, delete, and a list of what is disabled.
-
-Happy path: steps 2 through 6 on the user’s own purchase, then the overview shows that confirmed amount.
-
-Failure and permission paths:
-
-- Invalid money, date, or empty merchant stays on the form with the field error. Nothing is saved as success.
-- A second browser session does not see the first person’s purchases, receipts, or cases. Unknown ids look like a missing page.
-- Sample rows are readable and labeled Sample. Writes to them are refused.
-- No matching policy: the purchase is saved, and the screen says Rewind will not guess a window.
-- Expired or outside the stored conditions: not labeled eligible, and Rewind does not offer to prepare that request.
-- Network or server failure: the page says the save did not happen. The user can retry.
-
-### Component map
-
-- Shell: header, primary nav, mobile bar, footer, skip link, 404, error boundary.
-- UI: button, field, badge, notice, skeleton.
-- Product: receipt card, purchase form, opportunity summary, case letter, savings figures.
-- One screen in Stage 1: Overview listing the sample policy registry from SQLite, with links that open those policies. Purchases and cases are not stubbed as dead buttons.
-
-### Domain model for Stage 2
-
-Stage 2 persists only the ledger:
-
-- `users`, `sessions` — guest browser session.
-- `purchases` — owner, merchant name, purchase date, currency, total in minor units, demo flag.
-- `items` — description, quantity, unit price in minor units, line total.
-- `receipts` — optional note the user typed. Extraction status `user_entered`. No file yet.
-
-Money is integer minor units. Totals are the sum of line totals. Floating point is not used to add money.
-
-Stage 3 adds versioned `policies` and `opportunities`. Stage 4 adds `cases`. Stage 5 adds receipt files, export, and deletion. The Stage 1 database can hold the policy registry early because the Overview reads it. Later tables arrive in later migrations.
-
-### Security boundary
-
-- Personal rows are filtered by `user_id` on every read and write.
-- Sample rows use a demo user with no session. They are world-readable and not writable.
-- Mutations check the `Origin` header against the host.
-- Write routes are rate-limited in SQLite.
-- Audit rows store an event name and short metadata. They do not store letter text, receipt notes, or tokens.
-- Uploaded files, once added, live outside `public/` and are downloaded only through an owner check.
-- No secrets in the repo. `.env.example` names the database path only.
-
-### Build and test plan
-
-1. Stage 1 — scaffold, tokens, shell, policy overview, unit smoke test, lint, typecheck, build, e2e, screenshots at 390 and 1440.
-2. Stage 2 — create, list, edit purchases. Tests for several purchases, cent totals, and refresh.
-3. Stage 3 — policy windows, merchant timezone, inclusive versus exclusive deadlines, outside-conditions wording.
-4. Stage 4 — letter, checklist, export, status machine. A case is not “sent” until the user says so.
-5. Stage 5 — private file upload, export, delete, confirmed savings separated from estimates.
-6. Stage 6 — authorization tests, runbook, pilot plan, CI, screenshots. No compliance claim.
-
-### Risks
-
-1. A sample policy can be mistaken for a real store rule. Mitigation: fictional merchant names, a Sample label, and an in-app source page that says it is not a live policy.
-2. Deadline off-by-one across timezones. Mitigation: calendar dates plus the policy timezone, with unit tests at the New York midnight boundary.
-3. Money rounding. Mitigation: parse decimal strings into integer minor units and add integers only.
-4. Receipt files are untrusted. Mitigation: size cap, allow-listed types, generated storage keys, owner-only download, and a visible “not scanned” label. There is no malware scanner in this app.
-5. Guest sessions are browser-local. A cleared cookie loses the handle to that data. Export and delete are in Stage 5. This is not an account system with email recovery.
-
-### Stage 1 checklist
-
-- Next.js, TypeScript strict, Tailwind, ESLint, Vitest, Playwright, GitHub Actions, `.env.example`.
-- Migration runner and `npm run db:setup`.
-- Tokens: paper `#F6F7F7`, ink `#16212A`, lime `#B6ED72`. Source Sans 3 and Fraunces.
-- Shell with keyboard focus, skip link, mobile nav, 404, and error boundary.
-- Overview reads sample policies from SQLite. Every primary control opens a real policy or settings page.
-- Settings can save a display name and timezone, or the screen explains why it cannot.
-- Disabled integrations are listed in words, with no pretend connect button.
-- Lint, typecheck, unit test, production build, and a Playwright smoke test.
+The owner’s request pre-approved every stage, so work continued after each report.
